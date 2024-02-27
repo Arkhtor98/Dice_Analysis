@@ -80,7 +80,7 @@ class Roll:
                     self.no_crit_wounds += 1
                     if self.wound_mods["devastating"]:
                         self.no_deva += 1
-                        self.tot_dmg += self.dmg
+                        self.fail_sv += 1
             elif (wound_roll == 1 and self.wound_mods["rwounds_1"]) \
             or self.wound_mods["rwounds_all"]:
                 self.wound_roll_base(toughness)
@@ -93,7 +93,7 @@ class Roll:
                 self.no_crit_wounds += 1
                 if self.wound_mods["devastating"]:
                     self.no_deva += 1
-                    self.tot_dmg += self.dmg
+                    self.fail_sv += 1
     #Includes invulnerable saves
     def save_sequ(self,save):
         if save + self.AP > 6 and self.invul > 6:
@@ -140,29 +140,29 @@ def to_wound(stn, tghn):
         return 5
 
 #Parameters (will eventually be handled by the GUI)
-attacks = 100
+attacks = 2
 to_hit = 2
-strength = 8
-toughness = 4
-AP = 3
-sv = 5
-dmg = 1
-sims = 100
+strength = 24
+toughness = 12
+AP = 5
+sv = 2
+dmg = 12
+sims = 5000
 rhits_1 = False
-rhits_all = True
-sustained = True
-lethal = False
+rhits_all = False
+sustained = False
+lethal = True
 crit_hit = 6
 crit_wound = 6
 anti = 6
-devastating = False
+devastating = True
 hit_mod = 0
 wound_mod =0
 rwounds_1 = False
-rwounds_all = True
+rwounds_all = False
 invulnerable_save = 7
-wounds_per_model = 1
-fnp = 6
+wounds_per_model = 24
+fnp = 7
 hit_mods = {"rhits_1":rhits_1,
             "rhits_all":rhits_all,
             "crit_hit" :crit_hit,
@@ -190,13 +190,13 @@ if __name__ == '__main__':
     #print(results)
     #print(results["hits"].mean())
     bins_sequ = (0,0.05,0.1,0.15,0.20,0.25,0.30,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1)
-    var_to_study = results["models killed"]*wounds_per_model/(results["total_attacks"]*dmg)
-    plt.hist(var_to_study,bins = bins_sequ,histtype="bar",range = (0,1))
-    plt.xlabel("effective wounds taken in % of total possible damage")
+    var_to_study = results["damage taken"]
+    plt.hist(var_to_study,histtype="bar")
+    plt.xlabel("effective damage taken")
     plt.ylabel("occurences")
-    plt.axvline(results["models killed"].mean()*wounds_per_model/(results["total_attacks"].mean()*dmg),ymin=0,ymax=3000,color='r')
+    plt.axvline(results["damage taken"].mean(),ymin=0,ymax=3000,color='r')
     plt.show()
-    print(results["models killed"].mean()*wounds_per_model/(results["total_attacks"].mean()*dmg))
+    print(results["damage taken"].mean())
 
 
 
